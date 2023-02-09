@@ -12,27 +12,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: 14
-
-    - name: Install dependencies
-      run: npm install @octokit/rest
-
     - name: Add comment to PR
-      uses: actions/github-script@0.8.0
-      with:
-        github-token: ${{ secrets.TEST_AUTO }}
-        script: |
-          const octokit = require('@octokit/rest')();
-          octokit.authenticate({
-            type: 'token',
-            token: process.env.TEST_AUTO,
-          });
-          octokit.pulls.createComment({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            pull_number: context.payload.pull_request.number,
-            body: 'This is an automated comment added by GitHub Actions.',
-          });
+      run: |
+        curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.AUTO_TEST }}" \
+          -H "Content-Type: application/json" \
+          -d "{\"body\": \"This is an automated comment added by GitHub Actions.\"}" \
+          "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
