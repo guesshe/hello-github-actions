@@ -14,8 +14,9 @@ jobs:
 
     - name: Add comment to PR
       run: |
+        echo "GITHUB_TOKEN: ${{ secrets.TEST_AUTO }}"
         curl -X POST \
-          -H "Authorization: Bearer ${{ TEST_AUTO }}" \
+          -H "Authorization: Bearer ${{ secrets.TEST_AUTO }}" \
           -H "Content-Type: application/json" \
           -d "{\"body\": \"This is an automated comment added by GitHub Actions.\"}" \
           "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
